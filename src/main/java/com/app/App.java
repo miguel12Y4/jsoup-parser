@@ -7,7 +7,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-
 /**
  * Hello world!
  */
@@ -22,12 +21,9 @@ public final class App {
         
         System.out.println("");
         for (Element link : links) {
-            String linkHref = link.attr("href");
+            String linkHref = link.attr("abs:href");
             String linkText = link.text();
-            if(linkHref != null && !linkHref.equals("") && linkHref.charAt(0) == '/'){
-                System.out.println(linkText+"\n"+doc.baseUri()+linkHref);
-
-            }else if(linkHref != null && !linkHref.equals("") && linkHref.charAt(0) == '#'){
+            if(linkHref != null && !linkHref.equals("") && linkHref.charAt(0) == '#'){
                 //no es imprime nada ya que no es un link, es solo para ir a un punto en especifico
                 //de la pagina
             }else{
