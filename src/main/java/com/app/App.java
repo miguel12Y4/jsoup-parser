@@ -17,7 +17,7 @@ public final class App {
     public static void main(String[] args) throws IOException {
 
         String inicio ="https://es.wikipedia.org/wiki/Algoritmo_de_Dijkstra";
-        String meta ="https://commons.wikimedia.org/wiki/1964_New_York_World%27s_Fair";
+        String meta ="https://es.wikipedia.org/wiki/Territorios_dependientes";
 
         String doc = recorrer(inicio, meta);
         
@@ -26,10 +26,10 @@ public final class App {
     }
 
     public static String recorrer(String inicio, String meta) throws IOException{
-        return camino(inicio, meta, 0,0,0);
+        return camino(inicio, meta, 0,0,0, "");
     }
 
-    private static String camino (String url, String meta, int profundidad, int index, int total) throws IOException{
+    private static String camino (String url, String meta, int profundidad, int index, int total, String title) throws IOException{
         
         //objetivo
         if(url.equals(meta)){
@@ -38,7 +38,7 @@ public final class App {
         }
 
         //condicion de borde (profundidad maxima de una ruta potencial)
-        if(profundidad==6){
+        if(profundidad==10){
             return "";
         }
 
@@ -57,11 +57,14 @@ public final class App {
         
         
         
-        System.out.println("la profundidad es:"+profundidad+"."+index+"/"+total);
-        System.out.println(url);
+        System.out.println("\nla profundidad es:"+profundidad+"."+index+"/"+total);
+        String l = title+"\t\t\t"+url+"\n"+doc.title();
+
+        System.out.println(l+"\n\n");
         
         //ordenar links encontrados para acotar el tiempo de busqueda
-        Elements pages = ordenar(links, meta);
+        //Elements pages = ordenar(links, meta);
+        Elements pages = links;
         
         int i=0;
         for (Element link : pages) {
@@ -72,7 +75,7 @@ public final class App {
             if(linksolo != null && !linksolo.equals("") && linksolo.charAt(0) != '#' ){
                 
                 //busco la meta en la siguiente pagina (linkHref)
-                String ruta = camino(linkHref, meta, profundidad+1, i, links.size());
+                String ruta = camino(linkHref, meta, profundidad+1, i, links.size(), l);
                
                 //si llegó a la meta(ruta!=""), retorno el camino o ruta
                 if(!ruta.equals("")){
@@ -90,12 +93,13 @@ public final class App {
         //ordenar estrategicamente los link de la pagina
         for (Element link : links) {
             String linkHref = link.attr("abs:href");
-
+            
             
             boolean match= false;
             try{
-                URL urlPage = new URL(linkHref);
                 URL urlMeta = new URL(meta);
+                URL urlPage = new URL(linkHref);
+                
                 match = urlMeta.getHost().equals(urlPage.getHost());
             }catch(Exception e) {
                 match= false;
