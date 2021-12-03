@@ -6,6 +6,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import java.net.*;
+import java.io.*;
 
 /**
  * Hello world!
@@ -46,30 +48,66 @@ public final class App {
         try{
             doc = Jsoup.connect(url).get();
         }catch(Exception e){
+            //si hubo un error en la conexion
             return "";
         }
 
         //obtener todos los enlaces de la pagina
         Elements links = doc.getElementsByTag("a");
-
+        
+        
+        
         System.out.println("la profundidad es:"+profundidad+"."+index+"/"+total);
-
-        int i=0;
         System.out.println(url);
-        for (Element link : links) {
+        
+        //ordenar links encontrados para acotar el tiempo de busqueda
+        Elements pages = ordenar(links, meta);
+        
+        int i=0;
+        for (Element link : pages) {
             String linkHref = link.attr("abs:href");
             String linksolo = link.attr("href");
 
-            if(linksolo != null && !linksolo.equals("") && linksolo.charAt(0) != '#'){
+            //verificar que el href sea valido y no apunte a si mismo
+            if(linksolo != null && !linksolo.equals("") && linksolo.charAt(0) != '#' ){
                 
+                //busco la meta en la siguiente pagina (linkHref)
                 String ruta = camino(linkHref, meta, profundidad+1, i, links.size());
                
-                if(ruta!="" && !ruta.contains(url)){
+                //si llegó a la meta(ruta!=""), retorno el camino o ruta
+                if(!ruta.equals("")){
                     return url+"   "+ruta;
                 }
             }
             i++;
         }
         return "";
+    }
+
+    private static Elements ordenar(Elements links, String meta){
+        Elements pages = new Elements();
+        
+        //ordenar estrategicamente los link de la pagina
+        for (Element link : links) {
+            String linkHref = link.attr("abs:href");
+
+            
+            boolean match= false;
+            try{
+                URL urlPage = new URL(linkHref);
+                URL urlMeta = new URL(meta);
+                match = urlMeta.getHost().equals(urlPage.getHost());
+            }catch(Exception e) {
+                match= false;
+            }
+            
+            if(match){
+                pages.add(0, link);
+            }else{
+                pages.add(pages.size(), link);
+            }
+        }
+        return pages;
+
     }
 }
