@@ -7,7 +7,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.net.*;
-import java.io.*;
 
 /**
  * Hello world!
@@ -17,7 +16,7 @@ public final class App {
     public static void main(String[] args) throws IOException {
 
         String inicio ="https://es.wikipedia.org/wiki/Algoritmo_de_Dijkstra";
-        String meta ="https://es.wikipedia.org/wiki/Territorios_dependientes";
+        String meta ="https://es.wikipedia.org/wiki/Teor%C3%ADa_de_grafos";
 
         String doc = recorrer(inicio, meta);
         
@@ -38,7 +37,7 @@ public final class App {
         }
 
         //condicion de borde (profundidad maxima de una ruta potencial)
-        if(profundidad==10){
+        if(profundidad==3){
             return "";
         }
 
@@ -63,6 +62,7 @@ public final class App {
         System.out.println(l+"\n\n");
         
         //ordenar links encontrados para acotar el tiempo de busqueda
+        
         //Elements pages = ordenar(links, meta);
         Elements pages = links;
         
